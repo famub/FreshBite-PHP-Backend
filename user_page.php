@@ -10,6 +10,9 @@ if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
 ?>
 
 <?php
+
+//Test اجرب اذا يشتغل او لا
+
 session_start();
 echo "User ID: ".$_SESSION['userID'];
 echo "<br>User Type: ".$_SESSION['userType'];
