@@ -305,7 +305,7 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id`, `userType`, `firstName`, `lastName`, `emailAddress`, `password`, `photoFileName`) VALUES
 (1, 'admin', 'khalid', 'ِAbdullah', 'khalid@email.com', '$2y$10$YcnsjwJZU0cHD.x9yx95n.MXPk2pBJ0a6iNt.Rv7PuOcMpHgrC1SG', NULL),
 (2, 'admin', 'Maha', 'Saleh', 'maha@gmail.com', '$2y$10$ozWa2kg/oCn2WdSJzgVRw.sYkXSE8So.Q5rrNFZk72L6OYcLTecCS', NULL),
-(3, 'user', 'Samar', 'Mohemed', 'samar1@gmail.com', '$2y$10$prAKH.l.sVsLdUbPt/Z3t.KRMPfsS4FtxIG0SQpPI966fbhpY5LHu', 'chef.avif'),
+(3, 'user', 'Samar', 'Mohemed', 'samar@gmail.com', '$2y$10$prAKH.l.sVsLdUbPt/Z3t.KRMPfsS4FtxIG0SQpPI966fbhpY5LHu', 'chef.avif'),
 (4, 'user', 'Gordan', 'Ramsay', 'Gordan@gmail.com', '$2y$10$fCGAoeKs.u9zy3InKcrao.8rYTV/zUAvuG9yZPDX5WC0AL/lpHD0y', 'gordan.jpeg'),
 (5, 'user', 'Ina', 'Garten', 'Ina@gmail.com', '$2y$10$BcIDI.8elyw2pSMkd3Rjje2hcZUGjVhg7BuGrBm2gMjCOmPYnfQLi', 'ina-chef.jpg');
 
