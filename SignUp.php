@@ -1,8 +1,16 @@
 <?php
-session_start();
-include 'db_connection.php'; // تأكدي أن ملف الاتصال بقاعدة البيانات موجود
+// تفعيل عرض الأخطاء
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// تحقق إذا تم إرسال الفورم
+// بدء الجلسة مرة واحدة
+if(session_status() == PHP_SESSION_NONE){
+    session_start();
+}
+
+include 'db_connection.php';
+
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
     
     $firstName = $_POST['firstName'] ?? '';
@@ -11,18 +19,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $password = $_POST['password'] ?? '';
     $photo = $_FILES['photo']['name'] ?? '';
 
-    // صورة افتراضية إذا لم يرفع المستخدم صورة
     if(empty($photo)){
         $photo = "avatar.webp";
     }
 
-    // تشفير كلمة المرور
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // تحقق إذا البريد موجود مسبقًا في User أو BlockedUser
-    $sql_check = "SELECT * FROM User WHERE emailAddress='$email'
+    $sql_check = "SELECT emailAddress FROM User WHERE emailAddress='$email'
                   UNION
-                  SELECT * FROM BlockedUser WHERE emailAddress='$email'";
+                  SELECT emailAddress FROM BlockedUser WHERE emailAddress='$email'";
     $result_check = mysqli_query($conn, $sql_check);
 
     if(mysqli_num_rows($result_check) > 0){
@@ -51,7 +56,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,15 +88,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
                     Already have an account? <a href="login.php" class="signup-link">Log-in</a>
                 </p>
                 
-                <?php
+         <?php
                 if(isset($error)){
                     if($error == "EmailAlreadyExists"){
-                        echo '<p style="color:red; margin-top:10px;">This email is already registered!</p>';
+                        echo "<script>alert('This email is already registered!');</script>";
                     } else {
-                        echo '<p style="color:red; margin-top:10px;">Database error occurred!</p>';
+                        echo "<script>alert('Database error occurred!');</script>";
                     }
                 }
-                ?>
+           ?>
             </div>
         </div>
         <div class="right-side"></div>

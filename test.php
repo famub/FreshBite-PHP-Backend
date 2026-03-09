@@ -1,6 +1,9 @@
 
 
 <?php
+
+//http://localhost:8888/FreshBite-PHP-Backend/test.php
+
 echo "PHP works!";
 
 if($conn){
