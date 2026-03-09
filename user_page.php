@@ -8,5 +8,5 @@ echo "<br>User Type: ".$_SESSION['userType'];
 
 
 <?php
-echo " user page";
+echo " <br> Welcome user page";
 ?>
