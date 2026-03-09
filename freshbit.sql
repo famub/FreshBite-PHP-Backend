@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 09, 2026 at 02:33 AM
+-- Generation Time: Mar 09, 2026 at 07:26 PM
 -- Server version: 5.7.24
 -- PHP Version: 8.3.1
 
@@ -303,11 +303,11 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `userType`, `firstName`, `lastName`, `emailAddress`, `password`, `photoFileName`) VALUES
-(1, 'admin', 'khalid', 'ِAbdullah', 'khalid@email.com', 'Kh123456', NULL),
-(2, 'admin', 'Maha', 'Saleh', 'maha@gmail.com', 'Ma123456', NULL),
-(3, 'user', 'Samar', 'Mohemed', 'samar1@gmail.com', 'samar123456', 'chef.avif'),
-(4, 'user', 'Gordan', 'Ramsay', 'Gordan@gmail.com', 'Gordan123456', 'gordan.jpeg'),
-(5, 'user', 'Ina', 'Garten', 'Ina@gmail.com', 'Ina123456', 'ina-chef.jpg');
+(1, 'admin', 'khalid', 'ِAbdullah', 'khalid@email.com', '$2y$10$YcnsjwJZU0cHD.x9yx95n.MXPk2pBJ0a6iNt.Rv7PuOcMpHgrC1SG', NULL),
+(2, 'admin', 'Maha', 'Saleh', 'maha@gmail.com', '$2y$10$ozWa2kg/oCn2WdSJzgVRw.sYkXSE8So.Q5rrNFZk72L6OYcLTecCS', NULL),
+(3, 'user', 'Samar', 'Mohemed', 'samar1@gmail.com', '$2y$10$prAKH.l.sVsLdUbPt/Z3t.KRMPfsS4FtxIG0SQpPI966fbhpY5LHu', 'chef.avif'),
+(4, 'user', 'Gordan', 'Ramsay', 'Gordan@gmail.com', '$2y$10$fCGAoeKs.u9zy3InKcrao.8rYTV/zUAvuG9yZPDX5WC0AL/lpHD0y', 'gordan.jpeg'),
+(5, 'user', 'Ina', 'Garten', 'Ina@gmail.com', '$2y$10$BcIDI.8elyw2pSMkd3Rjje2hcZUGjVhg7BuGrBm2gMjCOmPYnfQLi', 'ina-chef.jpg');
 
 --
 -- Indexes for dumped tables
@@ -435,7 +435,7 @@ ALTER TABLE `report`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
