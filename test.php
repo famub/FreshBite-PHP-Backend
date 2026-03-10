@@ -4,6 +4,7 @@
 
 //http://localhost:8888/FreshBite-PHP-Backend/test.php
 
+
 echo "PHP works!";
 
 if($conn){
@@ -21,4 +22,5 @@ $result = mysqli_query($conn, $sql);
 while($row = mysqli_fetch_assoc($result)) {
     echo $row['categoryName'] . "<br>";
 }
+
 ?>
