@@ -9,6 +9,7 @@ echo "PHP works!";
 if($conn){
     echo "Database connected successfully";
 }
+
 ?>
 
 <?php
