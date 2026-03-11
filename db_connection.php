@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";      
 $password = "root";   
-$dbname = "freshbite";
+$dbname = "freshbit";
 
 $conn = mysqli_connect($host, $user, $password, $dbname);
 
