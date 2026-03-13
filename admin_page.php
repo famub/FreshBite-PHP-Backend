@@ -88,7 +88,7 @@ $blocked_result = mysqli_query($conn, $blocked_query);
         <!-- Card -->
         <article class="admin-recipe-card">
           <div class="admin-recipe-image">
-            <img src="images/<?php echo $row['recipe_photo']; ?>" alt="Recipe image">
+            <img src="images/<?php echo $row['recipePhoto']; ?>" alt="Recipe image">
           </div>
 
           <div class="admin-recipe-card-body">
@@ -99,7 +99,7 @@ $blocked_result = mysqli_query($conn, $blocked_query);
             </p>
 
             <div class="admin-recipe-creator">
-              <img src="images/<?php echo $row['creator_photo']; ?>" alt="Creator image">
+              <img src="images/<?php echo $row['chefPhoto']; ?>" alt="Creator image">
               <span>CREATOR: <?php echo $row['firstName'] . ' ' . $row['lastName']; ?></span>
             </div>
 
