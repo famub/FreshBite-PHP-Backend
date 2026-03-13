@@ -13,7 +13,7 @@
                 <h2>Sign Up!</h2>
                 <p style="margin-bottom: 20px; color: #666;">Create your account to get started.</p>
                 
-                <form action="" method="POST" enctype="multipart/form-data">
+                <form action="process_signup.php" method="POST" enctype="multipart/form-data">
                     <input type="text" name="firstName" placeholder="First Name" class="input-field" required>
                     <input type="text" name="lastName" placeholder="Last Name" class="input-field" required>
                     <input type="email" name="email" placeholder="Email Address" class="input-field" required>

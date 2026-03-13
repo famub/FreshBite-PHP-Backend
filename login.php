@@ -12,7 +12,7 @@
                 <h2>Welcome Back!</h2>
                 <p style="margin-bottom: 20px; color: #666;">Please enter your details.</p>
                 
-                <form action="" method="POST">
+                <form action="check_login.php" method="POST">
                     <input type="email" name="email" placeholder="Email Address" class="input-field" required>
                     <input type="password" name="password" placeholder="Password" class="input-field" required>
                     
