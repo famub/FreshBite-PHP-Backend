@@ -27,11 +27,12 @@ $reports_query = "
         r.id AS report_id,
         r.recipeID,
         rec.name AS recipe_name,
-        rec.photoFileName,
+        rec.recipePhoto,
         u.id AS owner_id,
         u.firstName,
         u.lastName,
-        u.emailAddress
+        u.emailAddress,
+        u.chefPhoto  
     FROM report r
     JOIN recipe rec ON r.recipeID = rec.id
     JOIN user u ON rec.userID = u.id
