@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 09, 2026 at 07:26 PM
+-- Generation Time: Mar 09, 2026 at 07:26 8
 -- Server version: 5.7.24
 -- PHP Version: 8.3.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `freshbit`
+-- Database: `freshbite`
 --
 
 -- --------------------------------------------------------
