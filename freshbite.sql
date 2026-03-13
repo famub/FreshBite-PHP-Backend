@@ -227,7 +227,7 @@ CREATE TABLE `recipe` (
   `categoryID` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text NOT NULL,
-  `photoFileName` varchar(255) NOT NULL,
+  `recipePhoto` varchar(255) NOT NULL,
   `videoFilePath` varchar(255) DEFAULT 'no video for recipe'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -235,7 +235,7 @@ CREATE TABLE `recipe` (
 -- Dumping data for table `recipe`
 --
 
-INSERT INTO `recipe` (`id`, `userID`, `categoryID`, `name`, `description`, `photoFileName`, `videoFilePath`) VALUES
+INSERT INTO `recipe` (`id`, `userID`, `categoryID`, `name`, `description`, `recipePhoto`, `videoFilePath`) VALUES
 (1, 3, 2, 'Mediterranean Grilled Chicken Bowl', 'A balanced Mediterranean bowl made with grilled chicken breast, fresh mixed greens, cucumbers, tomatoes, olives, and feta cheese. Lightly seasoned and finished with olive oil and lemon juice for a healthy, protein-rich meal.', 'noBackground-Grilled-Chicken.png', 'https://youtube.com/shorts/FBp-XB6rSO8?si=tuvsZnvep4gYsZso'),
 (2, 3, 3, 'Sweet Potato & Quinoa Power Bowl', 'A nutritious vegetarian power bowl featuring roasted sweet potatoes, quinoa, chickpeas, avocado, and pomegranate seeds. Topped with a creamy tahini-lemon dressing, this bowl is rich in fiber, plant-based protein, and natural flavors.', 'Sweet-Potato-Quinoa.png', 'no video for recipe'),
 (3, 4, 1, 'Japanese Crab Salad', 'A light and refreshing crab salad with a creamy, slightly tangy dressing. This dish combines crisp textures with a smooth sesame-flavored sauce, making it perfect as a quick appetizer, side dish, or a chilled meal on warm days. Easy to prepare and great for gatherings or everyday meals.', 'crabSalad.webp', 'https://youtu.be/5QBGJSNNpoU?si=Psudu3OCIYgSk3NB'),
@@ -295,14 +295,14 @@ CREATE TABLE `user` (
   `lastName` varchar(50) NOT NULL,
   `emailAddress` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `photoFileName` varchar(255) DEFAULT 'avatar.webp'
+  `chefPhoto` varchar(255) DEFAULT 'avatar.webp'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `userType`, `firstName`, `lastName`, `emailAddress`, `password`, `photoFileName`) VALUES
+INSERT INTO `user` (`id`, `userType`, `firstName`, `lastName`, `emailAddress`, `password`, `chefPhoto`) VALUES
 (1, 'admin', 'khalid', 'ِAbdullah', 'khalid@email.com', '$2y$10$YcnsjwJZU0cHD.x9yx95n.MXPk2pBJ0a6iNt.Rv7PuOcMpHgrC1SG', NULL),
 (2, 'admin', 'Maha', 'Saleh', 'maha@gmail.com', '$2y$10$ozWa2kg/oCn2WdSJzgVRw.sYkXSE8So.Q5rrNFZk72L6OYcLTecCS', NULL),
 (3, 'user', 'Samar', 'Mohemed', 'samar@gmail.com', '$2y$10$prAKH.l.sVsLdUbPt/Z3t.KRMPfsS4FtxIG0SQpPI966fbhpY5LHu', 'chef.avif'),
