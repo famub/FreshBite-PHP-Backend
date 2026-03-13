@@ -289,7 +289,7 @@ INSERT INTO `report` (`id`, `userID`, `recipeID`) VALUES
 --
 
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL,
+  `id` int(5) NOT NULL,
   `userType` enum('user','admin') NOT NULL,
   `firstName` varchar(50) NOT NULL,
   `lastName` varchar(50) NOT NULL,
