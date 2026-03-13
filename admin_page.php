@@ -157,7 +157,7 @@ $blocked_result = mysqli_query($conn, $blocked_query);
     <aside class="admin-sidebar">
 
       <div class="admin-sidebar-top">
-        <a class="admin-logout-link" href="index.html">sign out</a>
+        <a class="admin-logout-link" href="logout.php">sign out</a>
       </div>
 
        <!-- Welcome note php -->
