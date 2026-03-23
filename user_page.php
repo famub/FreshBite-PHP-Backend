@@ -13,23 +13,19 @@ if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
 ?>
 
 
-
 <?php
 session_start();
 
-// ============= التحقق من أن المستخدم user عادي =============
+// ============= (a) Check if user is a regular user =============
 if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
     header("Location: login.php?error=unauthorized");
     exit();
 }
 
-// 12 رابط تسجيل الخروج نقطه php
-// <a href="logout.php">sign out</a>
-
-// تضمين ملف الاتصال بقاعدة البيانات
+// Include database connection file
 include('db_connection.php');
 
-// ============= جلب معلومات المستخدم =============
+// ============= (b) Get user information from database =============
 $userID = $_SESSION['userID'];
 $userQuery = "SELECT id, firstName, lastName, emailAddress, chefPhoto 
               FROM user 
@@ -38,12 +34,14 @@ $userResult = mysqli_query($conn, $userQuery);
 $userData = mysqli_fetch_assoc($userResult);
 $fullName = $userData['firstName'] . ' ' . $userData['lastName'];
 
-// ============= جلب إحصائيات المستخدم =============
+// ============= (c) Get user statistics =============
+// Get total number of recipes for this user
 $recipesCountQuery = "SELECT COUNT(*) as total FROM recipe WHERE userID = $userID";
 $recipesCountResult = mysqli_query($conn, $recipesCountQuery);
 $recipesCountData = mysqli_fetch_assoc($recipesCountResult);
 $totalRecipes = $recipesCountData['total'];
 
+// Get total number of likes for all user's recipes
 $likesCountQuery = "SELECT COUNT(likes.userID) as total 
                     FROM likes 
                     JOIN recipe ON likes.recipeID = recipe.id 
@@ -52,14 +50,15 @@ $likesCountResult = mysqli_query($conn, $likesCountQuery);
 $likesCountData = mysqli_fetch_assoc($likesCountResult);
 $totalLikes = $likesCountData['total'];
 
-// ============= جلب التصنيفات للفلتر =============
+// ============= (d) Get categories for filter from database =============
 $categoriesQuery = "SELECT id, categoryName FROM recipecategory";
 $categoriesResult = mysqli_query($conn, $categoriesQuery);
 
-// ============= معالجة الفلتر وعرض الوصفات =============
+// ============= (e) Handle filter and display recipes =============
 $selectedCategory = 'all';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['category'])) {
+    // POST request - display recipes by selected category
     $selectedCategory = mysqli_real_escape_string($conn, $_POST['category']);
     
     if ($selectedCategory === 'all') {
@@ -77,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['category'])) {
                          ORDER BY recipe.id DESC";
     }
 } else {
+    // GET request - display all recipes
     $recipesQuery = "SELECT recipe.*, user.firstName, user.lastName, user.chefPhoto, recipecategory.categoryName
                      FROM recipe 
                      JOIN user ON recipe.userID = user.id
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['category'])) {
 
 $recipesResult = mysqli_query($conn, $recipesQuery);
 
-// ============= جلب المفضلة للمستخدم =============
+// ============= (f) Get user's favorite recipes =============
 $favoritesQuery = "SELECT recipe.*, recipecategory.categoryName
                    FROM favourites 
                    JOIN recipe ON favourites.recipeID = recipe.id
@@ -96,7 +96,7 @@ $favoritesQuery = "SELECT recipe.*, recipecategory.categoryName
 $favoritesResult = mysqli_query($conn, $favoritesQuery);
 $hasFavorites = mysqli_num_rows($favoritesResult) > 0;
 
-// دالة لجلب عدد اللايكات
+// Helper function to get number of likes for a recipe
 function getRecipeLikes($conn, $recipeID) {
     $likesQuery = "SELECT COUNT(*) as total FROM likes WHERE recipeID = $recipeID";
     $likesResult = mysqli_query($conn, $likesQuery);
@@ -104,7 +104,6 @@ function getRecipeLikes($conn, $recipeID) {
     return $likesData['total'];
 }
 ?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -135,7 +134,7 @@ function getRecipeLikes($conn, $recipeID) {
         <header class="section-header">
           <h2>All recipes</h2>
 
-          <!-- فلتر التصنيفات -->
+          <!-- Filter Form -->
           <form method="POST" action="" class="filter-controls">
             <select name="category" class="category-menu">
               <option value="all" <?php echo ($selectedCategory == 'all') ? 'selected' : ''; ?>>All</option>
@@ -156,6 +155,7 @@ function getRecipeLikes($conn, $recipeID) {
 
         <!-- Cards Grid -->
         <div class="cards-grid all-recipes-grid">
+
           <?php if (mysqli_num_rows($recipesResult) > 0): ?>
             <?php while($recipe = mysqli_fetch_assoc($recipesResult)): 
               $likesCount = getRecipeLikes($conn, $recipe['id']);
@@ -165,10 +165,10 @@ function getRecipeLikes($conn, $recipeID) {
               <article class="recipe-card">
                 <div class="recipe-image"><img src="images/<?php echo $recipe['recipePhoto']; ?>" alt="Recipe image"></div>
                 <div class="recipe-card-body">
-                  <p class="recipe-title"><a href="view-recipe.php?id=<?php echo $recipe['id']; ?>"><?php echo $recipe['name']; ?></a></p>
+                  <p class="recipe-title"><a href="view-recipe.php?id=<?php echo $recipe['id']; ?>"><?php echo strtolower($recipe['name']); ?></a></p>
                   <div class="recipe-creator">
                     <img src="images/<?php echo $recipe['chefPhoto']; ?>" alt="Creator image">
-                    <span>CREATOR: <?php echo strtoupper($creatorName); ?></span>
+                    <span>CREATOR: <?php echo strtolower($creatorName); ?></span>
                   </div>
                   <div class="likes like-btn">
                     <span><?php echo $likesCount; ?></span>
@@ -181,26 +181,28 @@ function getRecipeLikes($conn, $recipeID) {
               </article>
             <?php endwhile; ?>
           <?php else: ?>
-            <p class="no-recipes-message">No recipes found in this category.</p>
+            <p class="no-recipes-message" style="text-align: center; width: 100%;">No recipes found in this category.</p>
           <?php endif; ?>
+
         </div>
       </section>
       
 
       <!-- Favorites -->
       <section class="section favorites">
-        <header class="section-header">
+<header class="section-header">
           <h2>Favorites</h2>
         </header>
 
         <div class="cards-grid favorites-grid">
+
           <?php if ($hasFavorites): ?>
             <?php while($favorite = mysqli_fetch_assoc($favoritesResult)): ?>
-<!-- Favorite Card -->
+              <!-- Favorite Card -->
               <article class="recipe-card favorite-card">
                 <div class="recipe-image"><img src="images/<?php echo $favorite['recipePhoto']; ?>" alt="Favorite recipe image"></div>
                 <div class="recipe-card-body">
-                  <p class="recipe-title"><a href="view-recipe.php?id=<?php echo $favorite['id']; ?>"><?php echo $favorite['name']; ?></a></p>
+                  <p class="recipe-title"><a href="view-recipe.php?id=<?php echo $favorite['id']; ?>"><?php echo strtolower($favorite['name']); ?></a></p>
                   <a href="remove-favorite.php?recipe_id=<?php echo $favorite['id']; ?>" class="delete-btn" onclick="return confirm('Remove from favorites?');">
                     <svg class="trash-icon" viewBox="0 0 24 24">
                       <path d="M3 6h18"/>
@@ -214,8 +216,9 @@ function getRecipeLikes($conn, $recipeID) {
               </article>
             <?php endwhile; ?>
           <?php else: ?>
-            <p class="no-favorites-message">You don't have any favorites yet.</p>
+            <p class="no-favorites-message" style="text-align: center; width: 100%;">You don't have any favorites yet.</p>
           <?php endif; ?>
+
         </div>
       </section>
 
@@ -225,7 +228,6 @@ function getRecipeLikes($conn, $recipeID) {
     <aside class="sidebar">
 
       <div class="sidebar-top">
-        <!-- 12 رابط تسجيل الخروج نقطه php -->
         <a class="logout-link" href="logout.php">sign out</a>
       </div>
 
@@ -234,9 +236,9 @@ function getRecipeLikes($conn, $recipeID) {
       </div>
 
       <div class="user-info">
-        <p class="user-welcome">Welcome <span><?php echo $fullName; ?></span></p>
+        <p class="user-welcome">Welcome <span><?php echo strtolower($fullName); ?></span></p>
         <p class="user-email">Email: <?php echo $userData['emailAddress']; ?></p>
-        <p><a href="my-recipes.php">My Recipes</a></p>
+        <p><a href="MyRecipes.php">My Recipes</a></p>
         <p>Total recipes: <?php echo $totalRecipes; ?></p>
         <p>Total likes: <?php echo $totalLikes; ?></p>
       </div>
@@ -250,6 +252,6 @@ function getRecipeLikes($conn, $recipeID) {
 </html>
 
 <?php
-// إغلاق اتصال قاعدة البيانات
+// Close database connection
 mysqli_close($conn);
 ?>
