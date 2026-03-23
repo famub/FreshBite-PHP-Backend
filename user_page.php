@@ -27,7 +27,7 @@ if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
 // <a href="logout.php">sign out</a>
 
 // تضمين ملف الاتصال بقاعدة البيانات
-include('connection.php');
+include('db_connection.php');
 
 // ============= جلب معلومات المستخدم =============
 $userID = $_SESSION['userID'];
