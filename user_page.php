@@ -12,18 +12,6 @@ if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
 //<a href="logout.php">sign out</a>
 ?>
 
-<?php
-//Test اجرب اذا يشتغل او لا
-
-
-echo "User ID: ".$_SESSION['userID'];
-echo "<br>User Type: ".$_SESSION['userType'];
-?>
-
-
-<?php
-echo " <br> Welcome user page";
-?>
 
 
 <?php
