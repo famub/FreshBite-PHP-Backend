@@ -45,7 +45,7 @@ move_uploaded_file($_FILES['photo']['tmp_name'], "images/".$photo);
 }
 
 $sql = "INSERT INTO User
-(userType,firstName,lastName,emailAddress,password,photoFileName)
+(userType,firstName,lastName,emailAddress,password,chefphoto)
 VALUES
 ('user','$firstName','$lastName','$email','$hashedPassword','$photo')";
 
