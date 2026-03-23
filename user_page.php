@@ -1,19 +1,3 @@
-
-
-<?php
-session_start();
-
-if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
-    header("Location: login.php?error=unauthorized");
-    exit();
-}
-
-// رابط تسجيل الخروج نقطه 12 php
-//<a href="logout.php">sign out</a>
-?>
-
-
-
 <?php
 session_start();
 
@@ -99,8 +83,7 @@ function getRecipeLikes($conn, $recipeID) {
     return 0;
 }
 ?>
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -257,7 +240,6 @@ function getRecipeLikes($conn, $recipeID) {
 </body>
 
 </html>
-
 <?php
 mysqli_close($conn);
 ?>
