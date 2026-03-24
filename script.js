@@ -7,8 +7,8 @@ function addIngredient() {
   const div = document.createElement("div");
   div.className = "row";
   div.innerHTML = `
-    <input type="text" placeholder="Enter ingredient" required>
-    <input type="text" placeholder="Enter quantity" required>
+    <input name="ingredient[]" type="text" placeholder="Enter ingredient" required>
+    <input name="quan[]" type="text" placeholder="Enter quantity" required>
   `;
   document.getElementById("ingredients").appendChild(div);
 }
@@ -20,15 +20,9 @@ function addStep() {
 
   const div = document.createElement("div");
   div.className = "row"; 
-  div.innerHTML = ` <input type="text" placeholder="Step ${stepCounter}: Enter instructions" required> `;
+  div.innerHTML = ` <input name="instruction[]" type="text" placeholder="Step ${stepCounter}: Enter instructions" required> `;
 
   document.getElementById("steps").appendChild(div);
-}
-
-function AddgoToMyRecipes() {
-  alert("Recipe added successfully!");
-  window.location.href = "my-recipes.html"; 
-  return false; 
 }
 
 function EditgoToMyRecipes() {
