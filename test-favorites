@@ -1,0 +1,95 @@
+<?php
+session_start();
+
+// تأكد من أن المستخدم مسجل دخول
+if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
+    header("Location: login.php?error=unauthorized");
+    exit();
+}
+
+include('db_connection.php');
+
+$userID = $_SESSION['userID'];
+
+// إضافة إلى المفضلة
+if(isset($_GET['add'])) {
+    $recipeID = (int)$_GET['add'];
+    // التحقق من عدم وجودها مسبقاً
+    $check = mysqli_query($conn, "SELECT * FROM favourites WHERE userID = $userID AND recipeID = $recipeID");
+    if(mysqli_num_rows($check) == 0) {
+        mysqli_query($conn, "INSERT INTO favourites (userID, recipeID) VALUES ($userID, $recipeID)");
+    }
+    header("Location: test_favorites.php");
+    exit();
+}
+
+// حذف من المفضلة
+if(isset($_GET['remove'])) {
+    $recipeID = (int)$_GET['remove'];
+    mysqli_query($conn, "DELETE FROM favourites WHERE userID = $userID AND recipeID = $recipeID");
+    header("Location: test_favorites.php");
+    exit();
+}
+
+// جلب جميع الوصفات
+$allRecipes = mysqli_query($conn, "SELECT * FROM recipe ORDER BY id");
+
+// جلب مفضلات المستخدم
+$favorites = mysqli_query($conn, "SELECT recipe.* FROM favourites 
+                                  JOIN recipe ON favourites.recipeID = recipe.id 
+                                  WHERE favourites.userID = $userID");
+$favIDs = [];
+while($fav = mysqli_fetch_assoc($favorites)) {
+    $favIDs[] = $fav['id'];
+}
+mysqli_data_seek($favorites, 0); // إعادة تعيين المؤشر للاستخدام لاحقاً
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار المفضلة</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .recipe { border: 1px solid #ccc; margin: 10px; padding: 10px; display: inline-block; width: 300px; }
+        .fav { background: #e0f7fa; }
+        button, a.button { display: inline-block; margin-top: 10px; padding: 5px 10px; background: #f47724; color: white; text-decoration: none; border-radius: 5px; }
+        .remove { background: #d9534f; }
+        hr { margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <h1>اختبار إضافة وحذف المفضلة</h1>
+    <p>المستخدم الحالي: ID = <?php echo $userID; ?></p>
+    <p><a href="user_page.php">➡️ الذهاب إلى صفحة المستخدم (لعرض المفضلة هناك)</a></p>
+    <hr>
+
+    <h2>📌 جميع الوصفات</h2>
+    <div style="display: flex; flex-wrap: wrap;">
+        <?php while($row = mysqli_fetch_assoc($allRecipes)): ?>
+            <div class="recipe <?php echo in_array($row['id'], $favIDs) ? 'fav' : ''; ?>">
+                <strong><?php echo $row['name']; ?></strong>
+                <?php if(in_array($row['id'], $favIDs)): ?>
+                    <br><a href="?remove=<?php echo $row['id']; ?>" class="button remove">❌ إزالة من المفضلة</a>
+                <?php else: ?>
+                    <br><a href="?add=<?php echo $row['id']; ?>" class="button">❤️ إضافة للمفضلة</a>
+                <?php endif; ?>
+            </div>
+        <?php endwhile; ?>
+    </div>
+
+    <hr>
+    <h2>⭐ مفضلاتي الحالية</h2>
+    <?php if(mysqli_num_rows($favorites) > 0): ?>
+        <ul>
+        <?php while($fav = mysqli_fetch_assoc($favorites)): ?>
+            <li><?php echo $fav['name']; ?> 
+                <a href="?remove=<?php echo $fav['id']; ?>" style="color:red;">[حذف]</a>
+            </li>
+        <?php endwhile; ?>
+        </ul>
+    <?php else: ?>
+        <p>لا توجد مفضلات حالياً.</p>
+    <?php endif; ?>
+</body>
+</html>
