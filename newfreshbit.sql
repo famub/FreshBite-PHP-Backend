@@ -60,7 +60,7 @@ CREATE TABLE `comment` (
 --
 -- Dumping data for table `comment`
 --
- 
+
 INSERT INTO `comment` (`id`, `recipeID`, `userID`, `comment`, `date`) VALUES
 (1, 1, 4, 'I like how simple yet satisfying this bowl is. The chicken looks perfectly cooked.', '2026-03-09 04:37:25'),
 (2, 1, 5, 'Loved the mediterranean touch, especially with the fresh veggies.', '2026-03-09 04:37:25'),
