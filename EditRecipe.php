@@ -43,6 +43,7 @@ $instructions = mysqli_query($conn, $insSql);
 <html>
 <head>
     <title>Edit Recipe</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
