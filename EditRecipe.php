@@ -45,65 +45,79 @@ $instructions = mysqli_query($conn, $insSql);
     <title>Edit Recipe</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="AD">
 
-<h1>Edit Recipe</h1>
+<div class="form-card">
+    <h1>Edit Recipe</h1>
 
-<form action="update_recipe.php" method="POST" enctype="multipart/form-data">
+    <form action="UpdateRecipe.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="recipeID" value="<?= $recipe['id'] ?>">
 
-<input type="hidden" name="recipeID" value="<?= $recipe['id'] ?>">
+        <div class="form-group">
+            <label>Name:</label>
+            <input type="text" name="name" value="<?= $recipe['name'] ?>" required>
+        </div>
 
-<label>Name:</label>
-<input type="text" name="name" value="<?= $recipe['name'] ?>" required>
+        <div class="form-group">
+            <label>Category:</label>
+            <select name="category" required>
+                <?php foreach ($categories as $cat) { ?>
+                    <option value="<?= $cat['id'] ?>" <?= ($cat['id'] == $recipe['categoryID']) ? 'selected' : '' ?>>
+                        <?= $cat['categoryName'] ?>
+                    </option>
+                <?php } ?>
+            </select>
+        </div>
 
-<br><br>
+        <div class="form-group">
+            <label>Description:</label>
+            <textarea name="description" required><?= $recipe['description'] ?></textarea>
+        </div>
 
-<label>Category:</label>
-<select name="category">
-<?php foreach ($categories as $cat) { ?>
-<option value="<?= $cat['id'] ?>" <?= ($cat['id'] == $recipe['categoryID']) ? 'selected' : '' ?>>
-<?= $cat['categoryName'] ?>
-</option>
-<?php } ?>
-</select>
+        <div class="form-group">
+            <label>Current Image:</label><br>
+            <img src="images/<?= $recipe['recipePhoto'] ?>" alt="Recipe Image" class="current-img">
+        </div>
 
-<br><br>
+        <div class="form-group">
+            <label>New Image:</label>
+            <input type="file" name="photo" accept="image/*">
+        </div>
 
-<label>Description:</label><br>
-<textarea name="description"><?= $recipe['description'] ?></textarea>
+        <div class="form-group">
+            <label>Ingredients:</label>
+            <div id="ingredients">
+            <?php foreach ($ingredients as $ingredient) { ?>
+                <div class="row">
+                    <input type="text" name="ingredient[]" value="<?= $ingredient['ingredientName'] ?>" required>
+                    <input type="text" name="quan[]" value="<?= $ingredient['ingredientQuantity'] ?>" required>
+                </div>
+            <?php } ?>
+        </div>
 
-<br><br>
+        <button type="button" class="small-btn" onclick="addIngredient()">
+          + Add Another Ingredient
+        </button>
 
-<label>Current Image:</label><br>
-<img src="images/<?= $recipe['recipePhoto'] ?>" width="120">
+        <br>
+        <br>
 
-<br><br>
+        <div class="form-group">
+            <label>Instructions :</label>
+            <div id="steps">
+            <?php foreach ($instructions as $instruction) { ?>
+                <input type="text" name="instruction[]" value="<?= $instruction['step'] ?>" required>
+            <?php } ?>
+        </div>
 
-<label>New Image:</label>
-<input type="file" name="photo">
+        <button type="button" class="small-btn" onclick="addStep()">
+          + Add Another Step
+        </button>
 
-<br><br>
+        <button type="submit" class="main-btn">Update</button>
+    </form>
+</div>
 
-<label>Ingredients:</label><br>
-<?php foreach ($ingredients as $ing) { ?>
-<input type="text" name="ingredient[]" value="<?= $ing['ingredientName'] ?>">
-<input type="text" name="quan[]" value="<?= $ing['ingredientQuantity'] ?>">
-<br>
-<?php } ?>
-
-<br>
-
-<label>Steps:</label><br>
-<?php foreach ($instructions as $ins) { ?>
-<input type="text" name="instruction[]" value="<?= $ins['step'] ?>">
-<br>
-<?php } ?>
-
-<br>
-
-<button type="submit">Update</button>
-
-</form>
-
+ <script src="script.js"></script>
 </body>
 </html>
