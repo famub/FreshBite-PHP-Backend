@@ -94,7 +94,7 @@ $blocked_result = mysqli_query($conn, $blocked_query);
 
           <div class="admin-recipe-card-body">
             <p class="admin-recipe-title">
-              <a href="view-recipe.php?id=<?php echo $row['recipeID']; ?>">
+              <a href="view.php?id=<?php echo $row['recipeID']; ?>">
                 <?php echo $row['recipe_name']; ?>
               </a>
             </p>

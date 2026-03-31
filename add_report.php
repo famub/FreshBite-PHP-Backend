@@ -2,7 +2,7 @@
 session_start();
 include('db_connection.php');
 
-if (!isset($_SESSION['userID'])) {
+if (!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user') {
     header("Location: login.php");
     exit();
 }
@@ -26,6 +26,7 @@ if (isset($_POST['recipeID'])) {
     }
 
     mysqli_stmt_close($stmt);
+    header("Location: view.php?id=" . $recipeID);
 }
 
 header("Location: view.php?id=" . $recipeID);

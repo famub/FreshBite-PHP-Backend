@@ -22,8 +22,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     header("Location: view.php?id=" . $recipeID);
     exit();
-} else {
-    header("Location: MyRecipes.php");
-    exit();
 }
 ?>
