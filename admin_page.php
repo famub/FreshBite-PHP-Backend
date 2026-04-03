@@ -9,20 +9,14 @@ if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'admin'){
     exit();
 }
 
-//  اجيب معلومات الأدمن من قاعده البيانات 
 
 require_once 'db_connection.php';
 
-$admin_id = $_SESSION['userID'];
-$query = "SELECT firstName, lastName, emailAddress FROM user WHERE id = ?";
-$stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "i", $admin_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+$admin_id = intval($_SESSION['userID']);  
+$query = "SELECT firstName, lastName, emailAddress FROM user WHERE id = $admin_id";
+$result = mysqli_query($conn, $query);
 $admin = mysqli_fetch_assoc($result);
-mysqli_stmt_close($stmt);
 
-//  جلب البلاغات 
 
 $reports_query = "
     SELECT 
@@ -43,7 +37,7 @@ $reports_query = "
 ";
 $reports_result = mysqli_query($conn, $reports_query);
 
-// جلب المستخدمين المحظورين
+
 
 $blocked_query = "SELECT firstName, lastName, emailAddress FROM blockeduser ORDER BY id DESC";
 $blocked_result = mysqli_query($conn, $blocked_query);
