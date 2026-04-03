@@ -1,5 +1,7 @@
 
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 
 if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'admin'){
@@ -32,7 +34,8 @@ $reports_query = "
         u.firstName,
         u.lastName,
         u.emailAddress,
-        u.chefPhoto  
+        u.chefPhoto
+  
     FROM report r
     JOIN recipe rec ON r.recipeID = rec.id
     JOIN user u ON rec.userID = u.id

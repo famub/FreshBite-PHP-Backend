@@ -17,32 +17,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // بدء transaction
     mysqli_begin_transaction($conn);
 
-    if ($action === 'block') {
-        // 1. حذف جميع وصفات المستخدم
-        //    (لأن في CASCADE، حذف الـ user كفاية)
+    try {
+        if ($action === 'block') {
+            // 1. حذف جميع وصفات المستخدم
+            //    (لأن في CASCADE، حذف الـ user كفاية)
+            
+            // 2. إضافة المستخدم إلى blockeduser
+            $query = "SELECT firstName, lastName, emailAddress FROM user WHERE id = ?";
+            $stmt = mysqli_prepare($conn, $query);
+            mysqli_stmt_bind_param($stmt, "i", $owner_id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $user = mysqli_fetch_assoc($result);
+            mysqli_stmt_close($stmt);
 
-        // 2. إضافة المستخدم إلى blockeduser
-        $query = "SELECT firstName, lastName, emailAddress FROM user WHERE id = ?";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "i", $owner_id);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $user = mysqli_fetch_assoc($result);
-        mysqli_stmt_close($stmt);
+            if ($user) {
+                $insert = "INSERT INTO blockeduser (firstName, lastName, emailAddress) VALUES (?, ?, ?)";
+                $stmt2 = mysqli_prepare($conn, $insert);
+                mysqli_stmt_bind_param($stmt2, "sss", $user['firstName'], $user['lastName'], $user['emailAddress']);
+                mysqli_stmt_execute($stmt2);
+                mysqli_stmt_close($stmt2);
 
-        if ($user) {
-            $insert = "INSERT INTO blockeduser (firstName, lastName, emailAddress) VALUES (?, ?, ?)";
-            $stmt2 = mysqli_prepare($conn, $insert);
-            mysqli_stmt_bind_param($stmt2, "sss", $user['firstName'], $user['lastName'], $user['emailAddress']);
-            mysqli_stmt_execute($stmt2);
-            mysqli_stmt_close($stmt2);
-
-            // 3. حذف المستخدم من user
-            $delete = "DELETE FROM user WHERE id = ?";
-            $stmt3 = mysqli_prepare($conn, $delete);
-            mysqli_stmt_bind_param($stmt3, "i", $owner_id);
-            mysqli_stmt_execute($stmt3);
-            mysqli_stmt_close($stmt3);
+                // 3. حذف المستخدم من user
+                $delete = "DELETE FROM user WHERE id = ?";
+                $stmt3 = mysqli_prepare($conn, $delete);
+                mysqli_stmt_bind_param($stmt3, "i", $owner_id);
+                mysqli_stmt_execute($stmt3);
+                mysqli_stmt_close($stmt3);
+            }
         }
 
         // 4. حذف التقرير
@@ -58,6 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: admin_page.php");
         exit();
 
+    } catch (Exception $e) {
+        mysqli_rollback($conn);
+        echo "حدث خطأ: " . $e->getMessage();
     }
 } else {
     header("Location: admin_page.php");
