@@ -20,7 +20,7 @@ $admin = mysqli_fetch_assoc($result);
 
 $reports_query = "
     SELECT 
-        r.id AS report_id,
+        MIN(r.id) AS report_id,
         r.recipeID,
         rec.name AS recipe_name,
         rec.recipePhoto,
@@ -28,12 +28,13 @@ $reports_query = "
         u.firstName,
         u.lastName,
         u.emailAddress,
-        u.chefPhoto
-  
+        u.chefPhoto,
+        COUNT(*) AS report_count
     FROM report r
     JOIN recipe rec ON r.recipeID = rec.id
     JOIN user u ON rec.userID = u.id
-    ORDER BY r.id DESC
+    GROUP BY r.recipeID
+    ORDER BY MIN(r.id) DESC
 ";
 $reports_result = mysqli_query($conn, $reports_query);
 

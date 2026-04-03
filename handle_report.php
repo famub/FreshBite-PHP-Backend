@@ -46,13 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $delete = "DELETE FROM user WHERE id = $owner_id";
             mysqli_query($conn, $delete);
         }
-    }
+    }elseif ($action === 'dismiss') {
+       
+        $get_recipe = "SELECT recipeID FROM report WHERE id = $report_id";
+        $recipe_result = mysqli_query($conn, $get_recipe);
+        $recipe_row = mysqli_fetch_assoc($recipe_result);
+        $recipe_id = $recipe_row['recipeID'];
 
-    
-    $delete_report = "DELETE FROM report WHERE id = $report_id";
-    mysqli_query($conn, $delete_report);
-
+        $delete_all_reports = "DELETE FROM report WHERE recipeID = $recipe_id";
+        mysqli_query($conn, $delete_all_reports); }
    
+        
     header("Location: admin_page.php");
     exit();
 } else {
