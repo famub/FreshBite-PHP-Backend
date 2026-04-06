@@ -121,21 +121,17 @@ for ($i = 0; $i < count($ingredients); $i++) {
 
 $instructions = $_POST['instruction'];
 
-// loop since probably there's more than one instruction
 for ($i = 0; $i < count($instructions); $i++) {
 
   // escaping to avoid sqli
   $instruction = mysqli_real_escape_string($conn, $instructions[$i]);
 
-  // the text in the ui will start w 1
   $step = $i + 1;
 
   $sql = "INSERT INTO `instructions` (`recipeID`, `step`, `stepOrder`) VALUES ('$recipeID', '$instruction', '$step');";
   $result = mysqli_query($conn, $sql);
 }
 
-// redirect
 header("Location: Myrecipes.php");
 
-// for security
 exit;
