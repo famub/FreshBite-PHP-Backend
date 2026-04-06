@@ -3,6 +3,6 @@
     session_unset();   
     session_destroy();
 
-    header("Location: index.php"); // تحويل المستخدم لصفحة البداية
+    header("Location: index.php"); 
     exit();
   ?>
