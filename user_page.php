@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// (a) Check if user is regular user
 if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
     header("Location: login.php?error=unauthorized");
     exit();
