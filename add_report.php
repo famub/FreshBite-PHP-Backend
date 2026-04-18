@@ -2,11 +2,7 @@
 session_start();
 include('db_connection.php');
 
-<<<<<<< HEAD
 if (!isset($_SESSION['userID'])) {
-=======
-if (!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user') {
->>>>>>> c1f2425178af294db4a1fab59d4a4d89e50a84e8
     header("Location: login.php");
     exit();
 }
@@ -30,10 +26,6 @@ if (isset($_POST['recipeID'])) {
     }
 
     mysqli_stmt_close($stmt);
-<<<<<<< HEAD
-=======
-    header("Location: view.php?id=" . $recipeID);
->>>>>>> c1f2425178af294db4a1fab59d4a4d89e50a84e8
 }
 
 header("Location: view.php?id=" . $recipeID);
