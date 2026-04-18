@@ -146,7 +146,7 @@ function getRecipeLikes($conn, $recipeID) {
                 </div>
                 <div class="recipe-card-body">
                   <p class="recipe-title">
-                    <a href="view-recipe.php?id=<?php echo $recipe['id']; ?>">
+                    <a href="view.php?id=<?php echo $recipe['id']; ?>">
                       <?php echo htmlspecialchars(strtolower($recipe['name'])); ?>
                     </a>
                   </p>

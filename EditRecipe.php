@@ -48,11 +48,12 @@ $instructions = mysqli_query($conn, $insSql);
 <body class="AD">
 
 <div class="form-card">
-    <h1>Edit Recipe</h1>
 
     <form action="UpdateRecipe.php" method="POST" enctype="multipart/form-data">
+      <section class="card-content" id="details">
+        <h1>Edit Recipe</h1>
         <input type="hidden" name="recipeID" value="<?= $recipe['id'] ?>">
-
+        
         <div class="form-group">
             <label>Name:</label>
             <input type="text" name="name" value="<?= $recipe['name'] ?>" required>
@@ -115,6 +116,7 @@ $instructions = mysqli_query($conn, $insSql);
         </button>
 
         <button type="submit" class="main-btn">Update</button>
+        </section>
     </form>
 </div>
 
