@@ -8,6 +8,14 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
+<<<<<<< HEAD
+=======
+if (!isset($_SESSION['userID'])) {
+  header("Location: login.php");
+  exit();
+}
+
+>>>>>>> c1f2425178af294db4a1fab59d4a4d89e50a84e8
 $recipeID = intval($_GET['id']);
 
 // get recipe + creator + category

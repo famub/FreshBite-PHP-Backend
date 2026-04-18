@@ -56,7 +56,7 @@ include('db_connection.php');
 
             // Instructions
             echo '<p class="Secondary-title">Instructions:</p>';
-            $sql2 = "SELECT * FROM instructions WHERE recipeID = " . $recipe["id"] . ";";
+            $sql2 = "SELECT * FROM instructions WHERE recipeID = " . $recipe["id"] . " ORDER BY stepOrder;";
             $instructions = mysqli_query($conn, $sql2);
             echo '<ol>';
             foreach($instructions as $instruction){

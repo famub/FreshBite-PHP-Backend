@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// (a) Check if user is regular user
 if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
     header("Location: login.php?error=unauthorized");
     exit();
@@ -113,7 +112,7 @@ function getRecipeLikes($conn, $recipeID) {
           <h2>All recipes</h2>
 
           <!-- Filter Form -->
-          <form method="POST" action="" class="filter-controls">
+          <form method="POST" action="user_page.php" class="filter-controls">
             <select name="category" class="category-menu">
               <option value="all" <?php echo ($selectedCategory == 'all') ? 'selected' : ''; ?>>All</option>
               <?php 

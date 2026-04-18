@@ -1,5 +1,7 @@
 
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 
 if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'admin'){
@@ -7,24 +9,18 @@ if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'admin'){
     exit();
 }
 
-//  اجيب معلومات الأدمن من قاعده البيانات 
 
 require_once 'db_connection.php';
 
-$admin_id = $_SESSION['userID'];
-$query = "SELECT firstName, lastName, emailAddress FROM user WHERE id = ?";
-$stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "i", $admin_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+$admin_id = intval($_SESSION['userID']);  
+$query = "SELECT firstName, lastName, emailAddress FROM user WHERE id = $admin_id";
+$result = mysqli_query($conn, $query);
 $admin = mysqli_fetch_assoc($result);
-mysqli_stmt_close($stmt);
 
-//  جلب البلاغات 
 
 $reports_query = "
     SELECT 
-        r.id AS report_id,
+        MIN(r.id) AS report_id,
         r.recipeID,
         rec.name AS recipe_name,
         rec.recipePhoto,
@@ -32,15 +28,17 @@ $reports_query = "
         u.firstName,
         u.lastName,
         u.emailAddress,
-        u.chefPhoto  
+        u.chefPhoto,
+        COUNT(*) AS report_count
     FROM report r
     JOIN recipe rec ON r.recipeID = rec.id
     JOIN user u ON rec.userID = u.id
-    ORDER BY r.id DESC
+    GROUP BY r.recipeID
+    ORDER BY MIN(r.id) DESC
 ";
 $reports_result = mysqli_query($conn, $reports_query);
 
-// جلب المستخدمين المحظورين
+
 
 $blocked_query = "SELECT firstName, lastName, emailAddress FROM blockeduser ORDER BY id DESC";
 $blocked_result = mysqli_query($conn, $blocked_query);
@@ -94,7 +92,7 @@ $blocked_result = mysqli_query($conn, $blocked_query);
 
           <div class="admin-recipe-card-body">
             <p class="admin-recipe-title">
-              <a href="view-recipe.php?id=<?php echo $row['recipeID']; ?>">
+              <a href="view.php?id=<?php echo $row['recipeID']; ?>">
                 <?php echo $row['recipe_name']; ?>
               </a>
             </p>

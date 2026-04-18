@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['userID'])) {
-  header("Location: login.php");
-  exit();
+if(!isset($_SESSION['userID']) || $_SESSION['userType'] !== 'user'){
+    header("Location: login.php?error=unauthorized");
+    exit();
 }
 
 include('db_connection.php');

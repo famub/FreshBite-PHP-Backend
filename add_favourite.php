@@ -27,6 +27,7 @@ if (isset($_POST['recipeID'])) {
     }
 
     mysqli_stmt_close($stmt);
+    header("Location: view.php?id=" . $recipeID);
 }
 
 header("Location: view.php?id=" . $recipeID);
