@@ -9,16 +9,16 @@ if (!isset($_SESSION['userID'])) {
 include("db_connection.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $recipeID = $_POST['recipeID'];  
+    $recipeID = $_POST['recipeID'];
     $userID = $_SESSION['userID'];
 
-    $name = mysqli_real_escape_string($conn, $_POST['name']);  
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
     $category = (int) $_POST['category'];
     $description = mysqli_real_escape_string($conn, $_POST['description']);
 
     // confirm that the recipe belongs to this user
     $checkSql = "SELECT * FROM recipe WHERE id = $recipeID AND userID = $userID";
-    $checkResult = mysqli_query($conn, $checkSql);  
+    $checkResult = mysqli_query($conn, $checkSql);
 
     if (!$checkResult || mysqli_num_rows($checkResult) == 0) {
         header("Location: myRecipes.php");
@@ -26,23 +26,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $recipe = mysqli_fetch_assoc($checkResult);
-    $photoName = $recipe['recipePhoto'];  
+    $photoName = $recipe['recipePhoto'];
 
-    
+
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0 && !empty($_FILES['photo']['tmp_name'])) {
-        
+
         // 1. حذف الصورة القديمة من مجلد images
         if ($photoName && file_exists("images/" . $photoName)) {
-            unlink("images/" . $photoName);  
-        
-        // 2. رفع الصورة الجديدة
-        $originalName = basename($_FILES['photo']['name']);
-        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
-        $newPhotoName = $recipeID . "_" . time() . "." . $extension;
-        $targetPath = "images/" . $newPhotoName;
-        
-        if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
-            $photoName = $newPhotoName;  // تحديث اسم الصورة الجديدة
+            unlink("images/" . $photoName);
+
+            // 2. رفع الصورة الجديدة
+            $originalName = basename($_FILES['photo']['name']);
+            $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+            $newPhotoName = $recipeID . "_" . time() . "." . $extension;
+            $targetPath = "images/" . $newPhotoName;
+
+            if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
+                $photoName = $newPhotoName;  // تحديث اسم الصورة الجديدة
+            }
         }
     }
 
