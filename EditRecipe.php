@@ -115,6 +115,27 @@ $instructions = mysqli_query($conn, $insSql);
           + Add Another Step
         </button>
 
+     <!-- Video Section -->
+<div class="form-group">
+    <label>Upload Video or URL :</label>
+
+    <?php if (!empty($recipe['videoFilePath']) && $recipe['videoFilePath'] != 'no video for recipe'): ?>
+        <?php if (filter_var($recipe['videoFilePath'], FILTER_VALIDATE_URL)): ?>
+            <p>Current Video URL: <a href="<?= htmlspecialchars($recipe['videoFilePath']) ?>" target="_blank"><?= htmlspecialchars($recipe['videoFilePath']) ?></a></p>
+        <?php else: ?>
+            <video width="320" height="240" controls>
+                <source src="videos/<?= htmlspecialchars($recipe['videoFilePath']) ?>" type="video/mp4">
+            </video>
+        <?php endif; ?>
+    <?php else: ?>
+        <p>No video uploaded for this recipe.</p>
+    <?php endif; ?>
+
+    <input type="file" name="video" accept="videos/*">
+    <br>
+    <input type="text" name="videoURL" placeholder="Paste video URL">
+</div>
+
         <button type="submit" class="main-btn">Update</button>
         </section>
     </form>
