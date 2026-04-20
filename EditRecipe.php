@@ -77,7 +77,7 @@ $instructions = mysqli_query($conn, $insSql);
 
         <div class="form-group">
             <label>Current Image:</label><br>
-            <img src="images/<?= $recipe['recipePhoto'] ?>" alt="Recipe Image" class="current-img">
+            <img src="images/<?= $recipe['recipePhoto'] ?>" alt="Recipe Image" class="current-img" width="30%">
         </div>
 
         <div class="form-group">
