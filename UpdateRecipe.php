@@ -92,50 +92,32 @@ if (!file_exists('videos')) {
 }
 
 // Handle Video (File or URL)
-$videoValue = 'no video for recipe'; // reset if nothing selected
 
-// Case 1: User uploaded a video file
-if (isset($_FILES['video']) && $_FILES['video']['error'] == 0 && !empty($_FILES['video']['tmp_name'])) {
+$videoValue = $recipe['videoFilePath']; 
+
+// 2. التحقق إذا قام المستخدم بإدخال URL جديد في خانة videoURL
+if (isset($_POST['videoURL']) && !empty(trim($_POST['videoURL']))) {
     
-    // Delete old video file if exists (local file only)
-    if (!empty($recipe['videoFilePath']) && $recipe['videoFilePath'] != 'no video for recipe' && !filter_var($recipe['videoFilePath'], FILTER_VALIDATE_URL)) {
-        $oldVideoPath = 'videos/' . $recipe['videoFilePath'];
-        if (file_exists($oldVideoPath)) {
-            unlink($oldVideoPath);
-        }
+    $newVideoURL = mysqli_real_escape_string($conn, trim($_POST['videoURL']));
+
+    $oldVideoPath = "videos/" . $recipe['videoFilePath'];
+    if (!empty($recipe['videoFilePath']) && $recipe['videoFilePath'] != 'no video for recipe' && file_exists($oldVideoPath)) {
+        unlink($oldVideoPath);
     }
-    
-    // Upload new video
-    $extension = pathinfo(basename($_FILES['video']['name']), PATHINFO_EXTENSION);
-    $newVideoName = $recipeID . "video" . time() . "." . $extension;
-    $targetPath = "videos/" . $newVideoName;
-    
-    if (move_uploaded_file($_FILES['video']['tmp_name'], $targetPath)) {
-        $videoValue = $newVideoName;
-    }
-}
-// Case 2: User entered a video URL
-else if (isset($_POST['videoURL']) && !empty(trim($_POST['videoURL']))) {
-    $videoURL = trim($_POST['videoURL']);
-    if (filter_var($videoURL, FILTER_VALIDATE_URL)) {
-        
-        // Delete old video file if exists (local file only)
-        if (!empty($recipe['videoFilePath']) && $recipe['videoFilePath'] != 'no video for recipe' && !filter_var($recipe['videoFilePath'], FILTER_VALIDATE_URL)) {
-            $oldVideoPath = 'videos/' . $recipe['videoFilePath'];
-            if (file_exists($oldVideoPath)) {
-                unlink($oldVideoPath);
-            }
-        }
-        
-        $videoValue = $videoURL;
-    }
-}
-// Case 3: No video input - keep old value (but remove 'no video for recipe' if exists?)
-else {
-    // Keep existing value, but if it's 'no video for recipe', keep it as is
-    if (!empty($recipe['videoFilePath']) && $recipe['videoFilePath'] != 'no video for recipe') {
-        $videoValue = $recipe['videoFilePath'];
-    }
+
+    $videoValue = $newVideoURL;
+
+} 
+
+$updateRecipeSql = "UPDATE recipe SET 
+                    name = '$name', 
+                    categoryID = $category, 
+                    description = '$description', 
+                    videoFilePath = '$videoValue' 
+                    WHERE id = $recipeID";
+
+if (mysqli_query($conn, $updateRecipeSql)) {
+    // نجاح التحديث
 }
 
     header("Location: myRecipes.php");
