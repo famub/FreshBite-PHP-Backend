@@ -121,8 +121,8 @@ $instructions = mysqli_query($conn, $insSql);
 
     <?php if (!empty($recipe['videoFilePath']) && $recipe['videoFilePath'] != 'no video for recipe'): ?>
         <?php if (filter_var($recipe['videoFilePath'], FILTER_VALIDATE_URL)): ?>
-            <p>Current Video URL: <a href="<?= htmlspecialchars($recipe['videoFilePath']) ?>" target="_blank"><?= htmlspecialchars($recipe['videoFilePath']) ?></a></p>
-        <?php else: ?>
+
+            <?php else: ?>
             <video width="320" height="240" controls>
                 <source src="videos/<?= htmlspecialchars($recipe['videoFilePath']) ?>" type="video/mp4">
             </video>
@@ -133,8 +133,14 @@ $instructions = mysqli_query($conn, $insSql);
 
     <input type="file" name="video" accept="video/*">
     <br>
-    <input type="text" name="videoURL" placeholder="Paste video URL">
-</div>
+<input 
+    type="text" 
+    name="videoURL" 
+    placeholder="Paste video URL"
+    value="<?= (filter_var($recipe['videoFilePath'], FILTER_VALIDATE_URL)) 
+        ? htmlspecialchars($recipe['videoFilePath']) 
+        : '' ?>"
+></div>
 
         <button type="submit" class="main-btn">Update</button>
         </section>
