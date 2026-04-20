@@ -95,7 +95,6 @@ if (!file_exists('videos')) {
 
 $videoValue = $recipe['videoFilePath']; 
 
-// 2. التحقق إذا قام المستخدم بإدخال URL جديد في خانة videoURL
 if (isset($_POST['videoURL']) && !empty(trim($_POST['videoURL']))) {
     
     $newVideoURL = mysqli_real_escape_string($conn, trim($_POST['videoURL']));
@@ -109,6 +108,28 @@ if (isset($_POST['videoURL']) && !empty(trim($_POST['videoURL']))) {
 
 } 
 
+// كود معالجة رفع ملف فيديو (Files)
+if (isset($_FILES['video']) && $_FILES['video']['error'] == 0 && !empty($_FILES['video']['tmp_name'])) {
+    
+    $oldVideoPath = "videos/" . $recipe['videoFilePath'];
+    if (!empty($recipe['videoFilePath']) && $recipe['videoFilePath'] != 'no video for recipe' && file_exists($oldVideoPath)) {
+        unlink($oldVideoPath);
+    }
+
+    // تجهيز بيانات الملف الجديد
+    $videoName = $_FILES['video']['name'];
+    $extension = pathinfo($videoName, PATHINFO_EXTENSION);
+    
+    // إنشاء اسم فريد للملف لمنع التكرار
+    $newFileName = "vid_" . $recipeID . "_" . time() . "." . $extension;
+    $targetPath = "videos/" . $newFileName;
+
+    // رفع الملف للمجلد وتحديث المتغير لقاعدة البيانات
+    if (move_uploaded_file($_FILES['video']['tmp_name'], $targetPath)) {
+        $videoValue = $newFileName;
+    }
+}
+
 $updateRecipeSql = "UPDATE recipe SET 
                     name = '$name', 
                     categoryID = $category, 
@@ -119,6 +140,8 @@ $updateRecipeSql = "UPDATE recipe SET
 if (mysqli_query($conn, $updateRecipeSql)) {
     // نجاح التحديث
 }
+
+
 
     header("Location: myRecipes.php");
     exit();

@@ -131,7 +131,7 @@ $instructions = mysqli_query($conn, $insSql);
         <p>No video uploaded for this recipe.</p>
     <?php endif; ?>
 
-    <input type="file" name="video" accept="videos/*">
+    <input type="file" name="video" accept="video/*">
     <br>
     <input type="text" name="videoURL" placeholder="Paste video URL">
 </div>
