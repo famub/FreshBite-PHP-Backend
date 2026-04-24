@@ -4,6 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/MAMP/htdocs/FreshBite-PHP-Backend/user_page.php</file>
+            <file>file:/C:/MAMP/htdocs/FreshBite-PHP-Backend/UpdateRecipe.php</file>
+            <file>file:/C:/MAMP/htdocs/FreshBite-PHP-Backend/AddRecipe.php</file>
+            <file>file:/C:/MAMP/htdocs/FreshBite-PHP-Backend/add_like.php</file>
+            <file>file:/C:/MAMP/htdocs/FreshBite-PHP-Backend/add_favourite.php</file>
+            <file>file:/C:/MAMP/htdocs/FreshBite-PHP-Backend/add_report.php</file>
+            <file>file:/C:/MAMP/htdocs/FreshBite-PHP-Backend/EditRecipe.php</file>
         </group>
     </open-files>
 </project-private>
