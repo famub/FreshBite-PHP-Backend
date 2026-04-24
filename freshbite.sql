@@ -60,7 +60,11 @@ CREATE TABLE `comment` (
 --
 -- Dumping data for table `comment`
 --
+<<<<<<< HEAD
+ 
+=======
 
+>>>>>>> c1f2425178af294db4a1fab59d4a4d89e50a84e8
 INSERT INTO `comment` (`id`, `recipeID`, `userID`, `comment`, `date`) VALUES
 (1, 1, 4, 'I like how simple yet satisfying this bowl is. The chicken looks perfectly cooked.', '2026-03-09 04:37:25'),
 (2, 1, 5, 'Loved the mediterranean touch, especially with the fresh veggies.', '2026-03-09 04:37:25'),
@@ -237,8 +241,8 @@ CREATE TABLE `recipe` (
 
 INSERT INTO `recipe` (`id`, `userID`, `categoryID`, `name`, `description`, `recipePhoto`, `videoFilePath`) VALUES
 (1, 3, 2, 'Mediterranean Grilled Chicken Bowl', 'A balanced Mediterranean bowl made with grilled chicken breast, fresh mixed greens, cucumbers, tomatoes, olives, and feta cheese. Lightly seasoned and finished with olive oil and lemon juice for a healthy, protein-rich meal.', 'noBackground-Grilled-Chicken.png', 'https://youtube.com/shorts/FBp-XB6rSO8?si=tuvsZnvep4gYsZso'),
-(2, 3, 3, 'Sweet Potato & Quinoa Power Bowl', 'A nutritious vegetarian power bowl featuring roasted sweet potatoes, quinoa, chickpeas, avocado, and pomegranate seeds. Topped with a creamy tahini-lemon dressing, this bowl is rich in fiber, plant-based protein, and natural flavors.', 'Sweet-Potato-Quinoa.png', 'no video for recipe'),
-(3, 4, 1, 'Japanese Crab Salad', 'A light and refreshing crab salad with a creamy, slightly tangy dressing. This dish combines crisp textures with a smooth sesame-flavored sauce, making it perfect as a quick appetizer, side dish, or a chilled meal on warm days. Easy to prepare and great for gatherings or everyday meals.', 'crabSalad.webp', 'https://youtu.be/5QBGJSNNpoU?si=Psudu3OCIYgSk3NB'),
+(2, 3, 3, 'Sweet Potato & Quinoa Power Bowl', 'A nutritious vegetarian power bowl featuring roasted sweet potatoes, quinoa, chickpeas, avocado, and pomegranate seeds. Topped with a creamy tahini-lemon dressing, this bowl is rich in fiber, plant-based protein, and natural flavors.', 'Sweet-Potato-Quinoa.png', 'SweetPotato&Quinoa.MP4'),
+(3, 4, 1, 'Japanese Crab Salad', 'A light and refreshing crab salad with a creamy, slightly tangy dressing. This dish combines crisp textures with a smooth sesame-flavored sauce, making it perfect as a quick appetizer, side dish, or a chilled meal on warm days. Easy to prepare and great for gatherings or everyday meals.', 'crabSalad.webp', 'no video for recipe'),
 (4, 5, 1, 'Mediterranean Tuna Salad', 'A light and refreshing Mediterranean-style tuna salad that combines fresh flavors with a simple, healthy preparation. Perfect for a quick meal, this salad is easy to make, satisfying, and ideal for anyone looking for a nutritious and delicious option.', 'TunaSalad.jpg', 'https://youtu.be/haqAfg4OI_M?si=OnP54TRbE5KuIQiz');
 
 -- --------------------------------------------------------

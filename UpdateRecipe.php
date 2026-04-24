@@ -135,7 +135,6 @@ if (!isset($_SESSION['userID']) || $_SESSION['userType'] != "user") {
 include("db_connection.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     $recipeID = $_POST['recipeID'];
     $userID = $_SESSION['userID'];
 
@@ -143,47 +142,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $category = (int) $_POST['category'];
     $description = mysqli_real_escape_string($conn, $_POST['description']);
 
-    // confirm that the recipe is for the same user
+    // confirm that the recipe belongs to this user
     $checkSql = "SELECT * FROM recipe WHERE id = $recipeID AND userID = $userID";
     $checkResult = mysqli_query($conn, $checkSql);
 
     if (!$checkResult || mysqli_num_rows($checkResult) == 0) {
-        header("Location: MyRecipes.php");
+        header("Location: myRecipes.php");
         exit();
     }
 
     $recipe = mysqli_fetch_assoc($checkResult);
     $photoName = $recipe['recipePhoto'];
 
-    // if the user uploads a new image
-    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0 && !empty($_FILES['photo']['name'])) {
-        $tmpName = $_FILES['photo']['tmp_name'];
-        $originalName = basename($_FILES['photo']['name']);
-        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
 
-        $newPhotoName = $recipeID . "." . $extension;
-        $targetPath = "images/" . $newPhotoName;
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0 && !empty($_FILES['photo']['tmp_name'])) {
 
-        if (move_uploaded_file($tmpName, $targetPath)) {
-            $photoName = $newPhotoName;
+        // 1. حذف الصورة القديمة من مجلد images
+        if ($photoName && file_exists("images/" . $photoName)) {
+            unlink("images/" . $photoName);
+
+            // 2. رفع الصورة الجديدة
+            $originalName = basename($_FILES['photo']['name']);
+            $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+            $newPhotoName = $recipeID . "_" . time() . "." . $extension;
+            $targetPath = "images/" . $newPhotoName;
+
+            if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
+                $photoName = $newPhotoName;  // تحديث اسم الصورة الجديدة
+            }
         }
     }
 
-    // update recipe table
-    $updateRecipeSql = "UPDATE recipe 
-                        SET name = '$name',
-                            categoryID = $category,
-                            description = '$description',
-                            recipePhoto = '$photoName'
-                        WHERE id = $recipeID AND userID = $userID";
-
+    // تحديث جدول recipe
+    $updateRecipeSql = "UPDATE recipe SET name = '$name', categoryID = $category, description = '$description', recipePhoto = '$photoName', videoFilePath = '$videoValue' WHERE id = $recipeID AND userID = $userID";
     mysqli_query($conn, $updateRecipeSql);
 
-    // delete old ingredients
-    $deleteIngredientsSql = "DELETE FROM ingredients WHERE recipeID = $recipeID";
-    mysqli_query($conn, $deleteIngredientsSql);
+    // حذف المكونات القديمة وإضافة الجديدة
+    mysqli_query($conn, "DELETE FROM ingredients WHERE recipeID = $recipeID");
 
-    // add new ingredients
     if (isset($_POST['ingredient']) && isset($_POST['quan'])) {
         $ingredients = $_POST['ingredient'];
         $quantities = $_POST['quan'];
@@ -193,35 +189,87 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $ingredientQuantity = mysqli_real_escape_string($conn, trim($quantities[$i]));
 
             if ($ingredientName != "" && $ingredientQuantity != "") {
-                $insertIngredientSql = "INSERT INTO ingredients (recipeID, ingredientName, ingredientQuantity)
-                                        VALUES ($recipeID, '$ingredientName', '$ingredientQuantity')";
-                mysqli_query($conn, $insertIngredientSql);
+                $insertIngredientsSql = "INSERT INTO ingredients (recipeID, ingredientName, ingredientQuantity) VALUES ($recipeID, '$ingredientName', '$ingredientQuantity')";
+                mysqli_query($conn, $insertIngredientsSql);
             }
         }
     }
 
-    // delete old instructions
-    $deleteInstructionsSql = "DELETE FROM instructions WHERE recipeID = $recipeID";
-    mysqli_query($conn, $deleteInstructionsSql);
+    // حذف التعليمات القديمة وإضافة الجديدة
+    mysqli_query($conn, "DELETE FROM instructions WHERE recipeID = $recipeID");
 
-    // add new instructions
     if (isset($_POST['instruction'])) {
         $instructions = $_POST['instruction'];
         $stepOrder = 1;
 
         for ($i = 0; $i < count($instructions); $i++) {
             $step = mysqli_real_escape_string($conn, trim($instructions[$i]));
-
             if ($step != "") {
-                $insertInstructionSql = "INSERT INTO instructions (recipeID, step, stepOrder)
-                                         VALUES ($recipeID, '$step', $stepOrder)";
-                mysqli_query($conn, $insertInstructionSql);
+                $insertInstructionsSql = "INSERT INTO instructions (recipeID, step, stepOrder) VALUES ($recipeID, '$step', $stepOrder)";
+                mysqli_query($conn, $insertInstructionsSql);
                 $stepOrder++;
             }
         }
     }
 
-    header("Location: MyRecipes.php");
+    // Ensure videos folder exists
+if (!file_exists('videos')) {
+    mkdir('videos', 0777, true);
+}
+
+// Handle Video (File or URL)
+
+$videoValue = $recipe['videoFilePath']; 
+
+if (isset($_POST['videoURL']) && !empty(trim($_POST['videoURL']))) {
+    
+    $newVideoURL = mysqli_real_escape_string($conn, trim($_POST['videoURL']));
+
+    $oldVideoPath = "videos/" . $recipe['videoFilePath'];
+    if (!empty($recipe['videoFilePath']) && $recipe['videoFilePath'] != 'no video for recipe' && file_exists($oldVideoPath)) {
+        unlink($oldVideoPath);
+    }
+
+    $videoValue = $newVideoURL;
+
+} 
+
+// كود معالجة رفع ملف فيديو (Files)
+if (isset($_FILES['video']) && $_FILES['video']['error'] == 0 && !empty($_FILES['video']['tmp_name'])) {
+    
+    $oldVideoPath = "videos/" . $recipe['videoFilePath'];
+    if (!empty($recipe['videoFilePath']) && $recipe['videoFilePath'] != 'no video for recipe' && file_exists($oldVideoPath)) {
+        unlink($oldVideoPath);
+    }
+
+    // تجهيز بيانات الملف الجديد
+    $videoName = $_FILES['video']['name'];
+    $extension = pathinfo($videoName, PATHINFO_EXTENSION);
+    
+    // إنشاء اسم فريد للملف لمنع التكرار
+    $newFileName = "vid_" . $recipeID . "_" . time() . "." . $extension;
+    $targetPath = "videos/" . $newFileName;
+
+    // رفع الملف للمجلد وتحديث المتغير لقاعدة البيانات
+    if (move_uploaded_file($_FILES['video']['tmp_name'], $targetPath)) {
+        $videoValue = $newFileName;
+    }
+}
+
+$updateRecipeSql = "UPDATE recipe SET 
+                    name = '$name', 
+                    categoryID = $category, 
+                    description = '$description', 
+                    videoFilePath = '$videoValue' 
+                    WHERE id = $recipeID";
+
+if (mysqli_query($conn, $updateRecipeSql)) {
+    // نجاح التحديث
+}
+
+
+
+    header("Location: myRecipes.php");
     exit();
 }
 ?> */

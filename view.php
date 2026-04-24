@@ -3,14 +3,15 @@
 session_start();
 include('db_connection.php');
 
-if (!isset($_GET['id'])) {
-    header("Location: MyRecipes.php");
+
+if (!isset($_SESSION['userID'])) {
+    header("Location: login.php");
     exit();
 }
 
-if (!isset($_SESSION['userID'])) {
-  header("Location: login.php");
-  exit();
+if (!isset($_GET['id'])) {
+    header("Location: MyRecipes.php");
+    exit();
 }
 
 $recipeID = intval($_GET['id']);
