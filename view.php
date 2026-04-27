@@ -8,7 +8,6 @@ if (!isset($_SESSION['userID'])) {
     header("Location: login.php");
     exit();
 }
-
 if (!isset($_GET['id'])) {
     header("Location: MyRecipes.php");
     exit();
@@ -107,7 +106,7 @@ if (isset($_SESSION['userID'])) {
     <div class="hero-actions">
 
         <!-- favourite -->
-        <form action="add_favourite.php" method="POST" style="display:inline;">
+        <form class="ajax-action-form" action="add_favourite.php" method="POST" style="display:inline;">
             <input type="hidden" name="recipeID" value="<?= $recipeID ?>">
             <button type="submit" class="icon-btn" title="Favorite" <?= $alreadyFavorited ? 'disabled' : '' ?>>
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -117,7 +116,7 @@ if (isset($_SESSION['userID'])) {
         </form>
 
         <!-- like -->
-        <form action="add_like.php" method="POST" style="display:inline;">
+        <form class="ajax-action-form" action="add_like.php" method="POST" style="display:inline;">
             <input type="hidden" name="recipeID" value="<?= $recipeID ?>">
             <button type="submit" class="icon-btn" title="Like" <?= $alreadyLiked ? 'disabled' : '' ?>>
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -128,7 +127,7 @@ if (isset($_SESSION['userID'])) {
         </form>
 
         <!-- report -->
-        <form action="add_report.php" method="POST" style="display:inline;">
+        <form class="ajax-action-form" action="add_report.php" method="POST" style="display:inline;">
             <input type="hidden" name="recipeID" value="<?= $recipeID ?>">
             <button type="submit" class="icon-btn" title="Report" <?= $alreadyReported ? 'disabled' : '' ?>>
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -218,5 +217,37 @@ if (isset($_SESSION['userID'])) {
 
 </main>
 
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+$(document).ready(function () {
+
+    $(".ajax-action-form").on("submit", function (e) {
+    e.preventDefault();
+
+        var form = $(this);
+        var button = form.find("button");
+
+        $.ajax({
+            url: form.attr("action"),
+            type: "POST",
+            data: form.serialize(),
+            success: function (response) { 
+                if (response.trim() === "true") {
+                    button.prop("disabled", true);
+                    button.addClass("disabled-btn");
+                } else {
+                    alert("Action failed. Please try again.");
+                }
+            },
+            error: function () {
+                alert("Something went wrong.");
+            }
+        });
+    });
+
+});
+</script>
 </body>
 </html>
