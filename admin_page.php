@@ -102,7 +102,7 @@ $blocked_result = mysqli_query($conn, $blocked_query);
             </div>
 
             
-            <form class="ajax-report-form" action="handle_report.php" method="POST">
+            <form class="ajax-report-form" action="handle_report_ajax.php" method="POST">
             <input type="hidden" name="report_id" value="<?php echo $row['report_id']; ?>">
             <input type="hidden" name="owner_id" value="<?php echo $row['owner_id']; ?>">
 
