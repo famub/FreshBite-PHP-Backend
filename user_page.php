@@ -19,9 +19,9 @@ $recipesCountQuery = "SELECT COUNT(*) as total FROM recipe WHERE userID = $userI
 $recipesCountResult = mysqli_query($conn, $recipesCountQuery);
 $totalRecipes = mysqli_fetch_assoc($recipesCountResult)['total'];
 
-$likesCountQuery = "SELECT COUNT(likes.userID) as total 
-                    FROM likes 
-                    INNER JOIN recipe ON likes.recipeID = recipe.id 
+$likesCountQuery = "SELECT COUNT(likes.userID) as total
+                    FROM likes
+                    INNER JOIN recipe ON likes.recipeID = recipe.id
                     WHERE recipe.userID = $userID";
 $likesCountResult = mysqli_query($conn, $likesCountQuery);
 $totalLikes = mysqli_fetch_assoc($likesCountResult)['total'];
@@ -30,18 +30,18 @@ $categoriesQuery = "SELECT id, categoryName FROM recipecategory";
 $categoriesResult = mysqli_query($conn, $categoriesQuery);
 
 // Load all recipes on page load
-$recipesQuery = "SELECT recipe.*, user.firstName, user.lastName, user.chefPhoto, recipecategory.categoryName 
-                 FROM recipe 
-                 INNER JOIN user ON recipe.userID = user.id 
-                 INNER JOIN recipecategory ON recipe.categoryID = recipecategory.id 
+$recipesQuery = "SELECT recipe.*, user.firstName, user.lastName, user.chefPhoto, recipecategory.categoryName
+                 FROM recipe
+                 INNER JOIN user ON recipe.userID = user.id
+                 INNER JOIN recipecategory ON recipe.categoryID = recipecategory.id
                  ORDER BY recipe.id DESC";
 $recipesResult = mysqli_query($conn, $recipesQuery);
 
-$favoritesQuery = "SELECT recipe.*, recipecategory.categoryName 
-                   FROM favourites 
-                   INNER JOIN recipe ON favourites.recipeID = recipe.id 
-                   INNER JOIN recipecategory ON recipe.categoryID = recipecategory.id 
-                   WHERE favourites.userID = $userID 
+$favoritesQuery = "SELECT recipe.*, recipecategory.categoryName
+                   FROM favourites
+                   INNER JOIN recipe ON favourites.recipeID = recipe.id
+                   INNER JOIN recipecategory ON recipe.categoryID = recipecategory.id
+                   WHERE favourites.userID = $userID
                    ORDER BY recipe.id DESC";
 $favoritesResult = mysqli_query($conn, $favoritesQuery);
 $hasFavorites = mysqli_num_rows($favoritesResult) > 0;
@@ -91,7 +91,7 @@ function getRecipeLikes($conn, $recipeID) {
         <!-- ✅ إضافة id="recipesGrid" لتحديثه عبر AJAX -->
         <div class="cards-grid all-recipes-grid" id="recipesGrid">
           <?php if (mysqli_num_rows($recipesResult) > 0): ?>
-            <?php while ($recipe = mysqli_fetch_assoc($recipesResult)): 
+            <?php while ($recipe = mysqli_fetch_assoc($recipesResult)):
               $likesCount = getRecipeLikes($conn, $recipe['id']);
               $creatorName = $recipe['firstName'] . ' ' . $recipe['lastName'];
             ?>
