@@ -46,7 +46,6 @@ $blocked_result = mysqli_query($conn, $blocked_query);
 ?>
 
 
-
 <!doctype html>
 <html lang="en">
 <head>
