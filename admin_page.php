@@ -84,7 +84,7 @@ $blocked_result = mysqli_query($conn, $blocked_query);
 
       <?php while ($row = mysqli_fetch_assoc($reports_result)): ?>
         <!-- Card -->
-        <article class="admin-recipe-card">
+        <article class="admin-recipe-card" id="report-card-<?php echo $row['report_id']; ?>">
           <div class="admin-recipe-image">
             <img src="images/<?php echo $row['recipePhoto']; ?>" alt="Recipe image">
           </div>
@@ -102,7 +102,7 @@ $blocked_result = mysqli_query($conn, $blocked_query);
             </div>
 
             
-            <form action="handle_report.php" method="POST">
+            <form class="ajax-report-form" action="handle_report.php" method="POST">
             <input type="hidden" name="report_id" value="<?php echo $row['report_id']; ?>">
             <input type="hidden" name="owner_id" value="<?php echo $row['owner_id']; ?>">
 
@@ -175,5 +175,47 @@ $blocked_result = mysqli_query($conn, $blocked_query);
 
   </div>
 </div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+          $(document).ready(function() {
+
+              $('.ajax-report-form').on('submit', function(e) {
+                  e.preventDefault();
+
+                  var form = $(this);
+                  var card = form.closest('.admin-recipe-card');
+
+                  var report_id = form.find('input[name="report_id"]').val();
+                  var owner_id = form.find('input[name="owner_id"]').val();
+                  var action = form.find('input[name="action"]:checked').val();
+
+                  $.ajax({
+                      url: 'handle_report_ajax.php',
+                      type: 'POST',
+                      data: {
+                          report_id: report_id,
+                          owner_id: owner_id,
+                          action: action
+                      },
+                      success: function(response) {
+                          if (response.trim() === 'true') {
+                              card.remove();
+                              alert('Action completed successfully');
+                          } else {
+                              alert('Action failed: ' + response);
+                          }
+                      },
+                      error: function() {
+                          alert('Server connection error');
+                      }
+                  });
+              });
+
+          });
+    </script>
+
+
 </body>
 </html>
