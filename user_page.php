@@ -29,7 +29,6 @@ $totalLikes = mysqli_fetch_assoc($likesCountResult)['total'];
 $categoriesQuery = "SELECT id, categoryName FROM recipecategory";
 $categoriesResult = mysqli_query($conn, $categoriesQuery);
 
-// Load all recipes on page load
 $recipesQuery = "SELECT recipe.*, user.firstName, user.lastName, user.chefPhoto, recipecategory.categoryName 
                  FROM recipe 
                  INNER JOIN user ON recipe.userID = user.id 
@@ -60,6 +59,8 @@ function getRecipeLikes($conn, $recipeID) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>User Page</title>
   <link rel="stylesheet" href="userAdmin.css">
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 <div class="allUser">
@@ -71,68 +72,15 @@ function getRecipeLikes($conn, $recipeID) {
         </div>
       </section>
 
-      <section class="section all-recipes">
-        <header class="section-header">
-          <h2>All recipes</h2>
-
-          <!-- ✅ تم حذف الفورم وزر Filter، وإضافة onchange -->
-          <div class="filter-controls">
-            <select name="category" id="categorySelect" class="category-menu" onchange="filterRecipes(this.value)">
-              <option value="all">All</option>
-              <?php while ($cat = mysqli_fetch_assoc($categoriesResult)): ?>
-                <option value="<?php echo $cat['id']; ?>">
-                  <?php echo htmlspecialchars($cat['categoryName']); ?>
-                </option>
-              <?php endwhile; ?>
-            </select>
-          </div>
-        </header>
-
-        <!-- ✅ إضافة id="recipesGrid" لتحديثه عبر AJAX -->
-        <div class="cards-grid all-recipes-grid" id="recipesGrid">
-          <?php if (mysqli_num_rows($recipesResult) > 0): ?>
-            <?php while ($recipe = mysqli_fetch_assoc($recipesResult)): 
-              $likesCount = getRecipeLikes($conn, $recipe['id']);
-              $creatorName = $recipe['firstName'] . ' ' . $recipe['lastName'];
-            ?>
-              <article class="recipe-card">
-                <div class="recipe-image">
-                  <img src="images/<?php echo htmlspecialchars($recipe['recipePhoto']); ?>" alt="Recipe image">
-                </div>
-                <div class="recipe-card-body">
-                  <p class="recipe-title">
-                    <a href="view.php?id=<?php echo $recipe['id']; ?>">
-                      <?php echo htmlspecialchars(strtolower($recipe['name'])); ?>
-                    </a>
-                  </p>
-                  <div class="recipe-creator">
-                    <img src="images/<?php echo htmlspecialchars($recipe['chefPhoto']); ?>" alt="Creator image">
-                    <span>CREATOR: <?php echo htmlspecialchars(strtolower($creatorName)); ?></span>
-                  </div>
-                  <div class="likes like-btn">
-                    <span><?php echo $likesCount; ?></span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z" />
-                    </svg>
-                  </div>
-                  <p class="recipe-category"><?php echo htmlspecialchars($recipe['categoryName']); ?></p>
-                </div>
-              </article>
-            <?php endwhile; ?>
-          <?php else: ?>
-            <p style="text-align: center; width: 100%; padding: 40px;">No recipes found.</p>
-          <?php endif; ?>
-        </div>
-      </section>
-
+      <!-- Favorites section with AJAX remove -->
       <section class="section favorites">
         <header class="section-header">
           <h2>Favorites</h2>
         </header>
-        <div class="cards-grid favorites-grid">
+        <div class="cards-grid favorites-grid" id="favoritesGrid">
           <?php if ($hasFavorites): ?>
             <?php while ($fav = mysqli_fetch_assoc($favoritesResult)): ?>
-              <article class="recipe-card favorite-card">
+              <article class="recipe-card favorite-card" data-recipe-id="<?php echo $fav['id']; ?>">
                 <div class="recipe-image">
                   <img src="images/<?php echo htmlspecialchars($fav['recipePhoto']); ?>" alt="Favorite recipe image">
                 </div>
@@ -142,15 +90,15 @@ function getRecipeLikes($conn, $recipeID) {
                       <?php echo htmlspecialchars(strtolower($fav['name'])); ?>
                     </a>
                   </p>
-                  <a href="remove-favorite.php?recipe_id=<?php echo $fav['id']; ?>" class="delete-btn" onclick="return confirm('Remove from favorites?');">
+                  <button class="delete-btn remove-fav-btn" data-id="<?php echo $fav['id']; ?>">
                     <svg class="trash-icon" viewBox="0 0 24 24">
                       <path d="M3 6h18"/>
                       <path d="M8 6V4h8v2"/>
                       <path d="M19 6l-1 14H6L5 6"/>
-                      <path d="M10 11v6"/>
+<path d="M10 11v6"/>
                       <path d="M14 11v6"/>
                     </svg>
-                  </a>
+                  </button>
                 </div>
               </article>
             <?php endwhile; ?>
@@ -179,66 +127,38 @@ function getRecipeLikes($conn, $recipeID) {
   </div>
 </div>
 
-<!-- ✅ JavaScript AJAX -->
 <script>
-function filterRecipes(category) {
-    const grid = document.getElementById('recipesGrid');
+$(document).ready(function() {
+    // Handle remove favorite via AJAX
+    $('.remove-fav-btn').on('click', function(e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var recipeId = $btn.data('id');
+        var $card = $btn.closest('.favorite-card');
 
-    // Show loading indicator
-    grid.innerHTML = '<p style="text-align:center; width:100%; padding:40px;">Loading...</p>';
-
-    // Send AJAX request
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'get_recipes.php?category=' + category, true);
-
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            const recipes = JSON.parse(xhr.responseText);
-
-            if (recipes.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; width:100%; padding:40px;">No recipes found in this category.</p>';
-                return;
+        $.ajax({
+            url: 'ajax_remove_favorite.php',
+            type: 'POST',
+            data: { recipe_id: recipeId },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    // Remove the card from DOM
+                    $card.remove();
+                    // If no favorites left, show message
+                    if ($('#favoritesGrid .favorite-card').length === 0) {
+                        $('#favoritesGrid').html('<p style="text-align: center; width: 100%; padding: 40px;">You don\'t have any favorites yet.</p>');
+                    }
+                } else {
+                    alert('Failed to remove from favorites: ' + (response.error || 'Unknown error'));
+                }
+            },
+            error: function() {
+                alert('An error occurred. Please try again.');
             }
-
-            let html = '';
-            recipes.forEach(function (recipe) {
-                const creatorName = recipe.firstName + ' ' + recipe.lastName;
-                html += `
-                <article class="recipe-card">
-                    <div class="recipe-image">
-                        <img src="images/${recipe.recipePhoto}" alt="Recipe image">
-                    </div>
-                    <div class="recipe-card-body">
-                        <p class="recipe-title">
-                            <a href="view.php?id=${recipe.id}">
-                                ${recipe.name.toLowerCase()}
-                            </a>
-                        </p>
-                        <div class="recipe-creator">
-                            <img src="images/${recipe.chefPhoto}" alt="Creator image">
-                            <span>CREATOR: ${creatorName.toLowerCase()}</span>
-                        </div>
-                        <div class="likes like-btn">
-                            <span>${recipe.likesCount}</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z" />
-                            </svg>
-                        </div>
-                        <p class="recipe-category">${recipe.categoryName}</p>
-                    </div>
-                </article>`;
-            });
-
-            grid.innerHTML = html;
-        }
-    };
-
-    xhr.onerror = function () {
-        grid.innerHTML = '<p style="text-align:center; color:red; padding:40px;">Error loading recipes.</p>';
-    };
-
-    xhr.send();
-}
+        });
+    });
+});
 </script>
 
 </body>
