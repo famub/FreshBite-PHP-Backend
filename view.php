@@ -187,7 +187,7 @@ if (isset($_SESSION['userID'])) {
                 <?= htmlspecialchars($recipe['videoFilePath']) ?>
             </a>
         <?php } else { ?>
-            <p>No video  aaaaa  for this recipe.</p>
+            <p>No video for this recipe.</p>
         <?php } ?>
     </section>
 
