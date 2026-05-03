@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 
@@ -16,7 +17,6 @@ include('db_connection.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Recipes</title>
     <link rel="stylesheet" href="style.css">
-    <script type="text/JavaScript" src="delScript.js"></script>
   </head>
   <body>
     <h1 class="main-title">My Recipes</h1>
@@ -95,7 +95,7 @@ include('db_connection.php');
                     </div>'; // like-btn end
             // del and edit
             echo '<div class="controls">
-                        <a onclick = "del('. $recipe["id"] .', this)" class="delete-btn">
+                        <a href="DeleteRecipe.php?id=' . $recipe["id"] . '" class="delete-btn">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                             class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"

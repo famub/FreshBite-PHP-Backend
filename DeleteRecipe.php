@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id'])) {
   $sql = 'DELETE FROM recipe WHERE id = ' . $id . ';';
   $result = mysqli_query($conn, $sql);
 
-  header("Location: Myrecipes.php");
+  echo "true";
   
   // for security
   exit;
