@@ -29,7 +29,6 @@ $totalLikes = mysqli_fetch_assoc($likesCountResult)['total'];
 $categoriesQuery = "SELECT id, categoryName FROM recipecategory";
 $categoriesResult = mysqli_query($conn, $categoriesQuery);
 
-// Load all recipes on page load
 $recipesQuery = "SELECT recipe.*, user.firstName, user.lastName, user.chefPhoto, recipecategory.categoryName
                  FROM recipe
                  INNER JOIN user ON recipe.userID = user.id
@@ -60,6 +59,8 @@ function getRecipeLikes($conn, $recipeID) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>User Page</title>
   <link rel="stylesheet" href="userAdmin.css">
+  <!-- jQuery for AJAX -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
 <div class="allUser">
@@ -74,8 +75,6 @@ function getRecipeLikes($conn, $recipeID) {
       <section class="section all-recipes">
         <header class="section-header">
           <h2>All recipes</h2>
-
-          <!-- ✅ تم حذف الفورم وزر Filter، وإضافة onchange -->
           <div class="filter-controls">
             <select name="category" id="categorySelect" class="category-menu" onchange="filterRecipes(this.value)">
               <option value="all">All</option>
@@ -88,7 +87,6 @@ function getRecipeLikes($conn, $recipeID) {
           </div>
         </header>
 
-        <!-- ✅ إضافة id="recipesGrid" لتحديثه عبر AJAX -->
         <div class="cards-grid all-recipes-grid" id="recipesGrid">
           <?php if (mysqli_num_rows($recipesResult) > 0): ?>
             <?php while ($recipe = mysqli_fetch_assoc($recipesResult)):
@@ -129,7 +127,7 @@ function getRecipeLikes($conn, $recipeID) {
         <header class="section-header">
           <h2>Favorites</h2>
         </header>
-        <div class="cards-grid favorites-grid">
+        <div class="cards-grid favorites-grid" id="favoritesGrid">
           <?php if ($hasFavorites): ?>
             <?php while ($fav = mysqli_fetch_assoc($favoritesResult)): ?>
               <article class="recipe-card favorite-card">
@@ -142,7 +140,8 @@ function getRecipeLikes($conn, $recipeID) {
                       <?php echo htmlspecialchars(strtolower($fav['name'])); ?>
                     </a>
                   </p>
-                  <a href="remove-favorite.php?recipe_id=<?php echo $fav['id']; ?>" class="delete-btn" onclick="return confirm('Remove from favorites?');">
+                  <!-- AJAX delete button: on click, send request, remove card on success -->
+                  <a href="javascript:void(0);" data-recipe-id="<?php echo $fav['id']; ?>" class="delete-btn ajax-delete" onclick="return confirm('Remove from favorites?');">
                     <svg class="trash-icon" viewBox="0 0 24 24">
                       <path d="M3 6h18"/>
                       <path d="M8 6V4h8v2"/>
@@ -179,27 +178,20 @@ function getRecipeLikes($conn, $recipeID) {
   </div>
 </div>
 
-<!-- ✅ JavaScript AJAX -->
 <script>
+// AJAX for filtering recipes (part 1)
 function filterRecipes(category) {
     const grid = document.getElementById('recipesGrid');
-
-    // Show loading indicator
     grid.innerHTML = '<p style="text-align:center; width:100%; padding:40px;">Loading...</p>';
-
-    // Send AJAX request
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'get_recipes.php?category=' + category, true);
-
     xhr.onload = function () {
         if (xhr.status === 200) {
             const recipes = JSON.parse(xhr.responseText);
-
             if (recipes.length === 0) {
                 grid.innerHTML = '<p style="text-align:center; width:100%; padding:40px;">No recipes found in this category.</p>';
                 return;
             }
-
             let html = '';
             recipes.forEach(function (recipe) {
                 const creatorName = recipe.firstName + ' ' + recipe.lastName;
@@ -228,17 +220,47 @@ function filterRecipes(category) {
                     </div>
                 </article>`;
             });
-
             grid.innerHTML = html;
         }
     };
-
     xhr.onerror = function () {
         grid.innerHTML = '<p style="text-align:center; color:red; padding:40px;">Error loading recipes.</p>';
     };
-
     xhr.send();
 }
+
+// AJAX for removing favorites (part 2)
+$(document).ready(function() {
+    $('.ajax-delete').click(function(e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var recipeId = $btn.data('recipe-id');
+        var $card = $btn.closest('.favorite-card');
+
+        $.ajax({
+            url: 'remove_favorite_ajax.php',
+            type: 'GET',
+            data: { recipe_id: recipeId },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success === true) {
+                    $card.fadeOut(300, function() {
+                        $(this).remove();
+                        // If no favorites left, show message
+                        if ($('.favorites-grid .favorite-card').length === 0) {
+                            $('#favoritesGrid').html('<p style="text-align: center; width: 100%; padding: 40px;">You don\'t have any favorites yet.</p>');
+                        }
+                    });
+                } else {
+                    alert('Error: ' + (response.message || 'Could not remove from favorites.'));
+                }
+            },
+            error: function() {
+                alert('AJAX request failed.');
+            }
+        });
+    });
+});
 </script>
 
 </body>

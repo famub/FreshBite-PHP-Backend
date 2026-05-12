@@ -61,7 +61,7 @@ $alreadyReported = false;
 if (isset($_SESSION['userID'])) {
     $viewerID = $_SESSION['userID'];
     $viewerType = $_SESSION['userType'];
-
+$showActions = true;  // تجريبي: يظهر الأزرار لأي مستخدم
     if ($viewerID != $recipe['userID'] && $viewerType != 'admin') {
         $showActions = true;
 
