@@ -9,11 +9,7 @@ $lastName = $_POST['lastName'];
 $email = $_POST['email'];
 $password = $_POST['password'];
 
-$photo = $_FILES['photo']['name'];
-
-if (empty($photo)) {
-    $photo = "avatar.webp";
-}
+$photo = "avatar.webp";
 
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -30,16 +26,6 @@ if (mysqli_num_rows($result) > 0) {
 
 }
 
-if (!empty($_FILES['photo']['name'])) {
-
-    $ext = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
-
-    $photo = uniqid() . "." . $ext;
-
-    move_uploaded_file($_FILES['photo']['tmp_name'], "images/" . $photo);
-
-}
-
 $sql = "INSERT INTO User
 (userType,firstName,lastName,emailAddress,password,chefphoto)
 VALUES
@@ -48,6 +34,20 @@ VALUES
 if (mysqli_query($conn, $sql)) {
 
     $userID = mysqli_insert_id($conn);
+
+    if (!empty($_FILES['photo']['name'])) {
+
+        $ext = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
+
+        $photo = "user_" . $userID . "." . $ext;
+
+        move_uploaded_file($_FILES['photo']['tmp_name'], "images/" . $photo);
+
+        $update = "UPDATE User SET chefPhoto='$photo' WHERE id='$userID'";
+
+        mysqli_query($conn, $update);
+
+    }
 
     $_SESSION['userID'] = $userID;
     $_SESSION['userType'] = 'user';
