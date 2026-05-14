@@ -182,7 +182,7 @@ function getRecipeLikes($conn, $recipeID) {
 // AJAX for filtering recipes (part 1)
 function filterRecipes(category) {
     const grid = document.getElementById('recipesGrid');
-    grid.innerHTML = '<p style="text-align:center; width:100%; padding:40px;">Loading...</p>';
+
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'get_recipes.php?category=' + category, true);
     xhr.onload = function () {
@@ -220,7 +220,10 @@ function filterRecipes(category) {
                     </div>
                 </article>`;
             });
-            grid.innerHTML = html;
+              $(grid).fadeOut(200, function () {
+              grid.innerHTML = html;
+              $(grid).fadeIn(200);
+    });
         }
     };
     xhr.onerror = function () {
@@ -244,7 +247,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.success === true) {
-                    $card.fadeOut(300, function() {
+                    $card.fadeOut(200, function() {
                         $(this).remove();
                         // If no favorites left, show message
                         if ($('.favorites-grid .favorite-card').length === 0) {
