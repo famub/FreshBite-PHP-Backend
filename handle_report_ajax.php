@@ -14,13 +14,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
 
     if ($action === 'block') {
-        $get_recipes = "SELECT recipePhoto FROM recipe WHERE userID = $owner_id";
+        $get_recipes = "SELECT recipePhoto,videoFilePath FROM recipe WHERE userID = $owner_id";
         $recipes_result = mysqli_query($conn, $get_recipes);
         while ($recipe = mysqli_fetch_assoc($recipes_result)) {
             $photo = $recipe['recipePhoto'];
             if (!empty($photo) && file_exists("images/" . $photo)) {
                 unlink("images/" . $photo);
             }
+
+        $video = $recipe['videoFilePath'];
+        if (!empty($video) && $video != 'no video for recipe') {
+                // نتأكد إذا كان الرابط يبدأ بـ http (أي رابط خارجي)
+                if (strpos($video, 'http') !== 0 && strpos($video, 'www') !== 0) {
+                    $videoPath = "videos/" . $video;
+                    if (file_exists($videoPath)) {
+                        unlink($videoPath);
+                    }
+                }
+            }
+
         }
 
         $query = "SELECT firstName, lastName, emailAddress, chefPhoto FROM user WHERE id = $owner_id";

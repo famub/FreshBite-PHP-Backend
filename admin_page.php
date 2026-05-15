@@ -202,6 +202,28 @@ $blocked_result = mysqli_query($conn, $blocked_query);
                       success: function(response) {
                           if (response.trim() === 'true') {
                               card.remove();
+
+
+                              if (action === 'block') {
+                                  
+                                  var creatorName = card.find('.admin-recipe-creator span').text().replace('CREATOR: ', '');
+                                  var creatorEmail = card.find('.admin-recipe-creator span').attr('data-email');
+
+                                  var blockedTableBody = $('.admin-root table tbody');
+                                  if (blockedTableBody.length === 0) {
+                                  
+                                      $('.blocked-users-section').html('<table><tbody></tbody></table>');
+                                      blockedTableBody = $('.admin-root table tbody');
+                                  }
+
+                              
+                                  var newRow = '<tr>' +
+                                      '<td>' + creatorName + '</td>' +
+                                      '<td><a href="mailto:' + creatorEmail + '">' + creatorEmail + '</a></td>' +
+                                      '</tr>';
+                                  blockedTableBody.append(newRow);
+                              }
+
                               alert('Action completed successfully');
                           } else {
                               alert('Action failed: ' + response);
