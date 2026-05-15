@@ -98,7 +98,9 @@ $blocked_result = mysqli_query($conn, $blocked_query);
 
             <div class="admin-recipe-creator">
               <img src="images/<?php echo $row['chefPhoto']; ?>" alt="Creator image">
-              <span>CREATOR: <?php echo $row['firstName'] . ' ' . $row['lastName']; ?></span>
+              <span data-email="<?php echo $row['emailAddress']; ?>">
+                CREATOR: <?php echo $row['firstName'] . ' ' . $row['lastName']; ?>
+              </span>
             </div>
 
             
